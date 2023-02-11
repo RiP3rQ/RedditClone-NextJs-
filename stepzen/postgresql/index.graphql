@@ -1,0 +1,232 @@
+type comment {
+  username: String
+  text: String
+  post_id: ID
+  id: ID!
+  created_at: DateTime
+}
+
+type post {
+  username: String
+  title: String
+  subreddit_id: ID
+  image: String
+  id: ID!
+  created_at: DateTime
+  body: String
+}
+
+type subreddit {
+  topic: String
+  id: ID!
+  created_at: DateTime
+}
+
+type vote {
+  username: String
+  upvote: Boolean
+  post_id: ID
+  id: ID!
+  created_at: DateTime
+}
+
+"""
+The following queries are just a set of examples of how to access your schema.
+Feel free to modify them or aggregate more.
+"""
+type Query {
+  " Queries for type 'comment' "
+  commentList: [comment]
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "comment"
+      configuration: "postgresql_config"
+    )
+  commentPaginatedList(first: Int, after: Int): [comment]
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      SELECT "created_at", "id", "post_id", "text", "username" FROM "comment" LIMIT $1 OFFSET $2
+      """
+      configuration: "postgresql_config"
+    )
+  " Queries for type 'post' "
+  postBySubreddit_id(subreddit_id: ID!): [post]
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "post"
+      configuration: "postgresql_config"
+    )
+  postBySubreddit_idAndBody(subreddit_id: ID!, body: String!): [post]
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "post"
+      configuration: "postgresql_config"
+    )
+  postList: [post]
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "post"
+      configuration: "postgresql_config"
+    )
+  postPaginatedList(first: Int, after: Int): [post]
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      SELECT "body", "created_at", "id", "image", "subreddit_id", "title", "username" FROM "post" LIMIT $1 OFFSET $2
+      """
+      configuration: "postgresql_config"
+    )
+  " Queries for type 'subreddit' "
+  subredditList: [subreddit]
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "subreddit"
+      configuration: "postgresql_config"
+    )
+  subredditPaginatedList(first: Int, after: Int): [subreddit]
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      SELECT "created_at", "id", "topic" FROM "subreddit" LIMIT $1 OFFSET $2
+      """
+      configuration: "postgresql_config"
+    )
+  " Queries for type 'vote' "
+  voteList: [vote]
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "vote"
+      configuration: "postgresql_config"
+    )
+  votePaginatedList(first: Int, after: Int): [vote]
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      SELECT "created_at", "id", "post_id", "upvote", "username" FROM "vote" LIMIT $1 OFFSET $2
+      """
+      configuration: "postgresql_config"
+    )
+}
+
+"""
+The following mutations are just a set of examples of how to access your schema.
+Feel free to modify them or aggregate more.
+"""
+type Mutation {
+  " Mutations for type 'comment' "
+  deleteComment(
+    username: String!
+    post_id: ID!
+    text: String!
+    id: ID!
+    created_at: DateTime!
+  ): comment
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "comment"
+      dml: DELETE
+      configuration: "postgresql_config"
+    )
+  insertComment(
+    username: String
+    post_id: ID
+    text: String
+    created_at: DateTime
+  ): comment
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "comment"
+      dml: INSERT
+      configuration: "postgresql_config"
+    )
+  " Mutations for type 'post' "
+  deletePost(
+    body: String!
+    subreddit_id: ID!
+    id: ID!
+    created_at: DateTime!
+    title: String!
+    username: String!
+    image: String!
+  ): post
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "post"
+      dml: DELETE
+      configuration: "postgresql_config"
+    )
+  insertPost(
+    body: String
+    subreddit_id: ID
+    created_at: DateTime
+    title: String
+    username: String
+    image: String
+  ): post
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "post"
+      dml: INSERT
+      configuration: "postgresql_config"
+    )
+  " Mutations for type 'subreddit' "
+  deleteSubreddit(topic: String!, created_at: DateTime!, id: ID!): subreddit
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "subreddit"
+      dml: DELETE
+      configuration: "postgresql_config"
+    )
+  insertSubreddit(topic: String, created_at: DateTime): subreddit
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "subreddit"
+      dml: INSERT
+      configuration: "postgresql_config"
+    )
+  " Mutations for type 'vote' "
+  deleteVote(
+    username: String!
+    post_id: ID!
+    id: ID!
+    created_at: DateTime!
+    upvote: Boolean!
+  ): vote
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "vote"
+      dml: DELETE
+      configuration: "postgresql_config"
+    )
+  insertVote(
+    username: String
+    post_id: ID
+    created_at: DateTime
+    upvote: Boolean
+  ): vote
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "vote"
+      dml: INSERT
+      configuration: "postgresql_config"
+    )
+}
