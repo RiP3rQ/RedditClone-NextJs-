@@ -5,9 +5,9 @@ import Avatar from "./Avatar";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@apollo/client";
 import { ADD_POST, ADD_SUBREDDIT } from "../graphql/mutations";
-import client from "@apollo/client";
 import { GET_SUBREDDIT_BY_TOPIC } from "../graphql/queries";
 import toast from "react-hot-toast";
+import client from "../apollo-client";
 
 type FormData = {
   postTitle: string;
@@ -35,12 +35,15 @@ function PostBox() {
 
     // Query for the subreddit topic...
     const {
-      loading,
       error,
       data: { getSubredditListByTopic },
-    } = client.useQuery(GET_SUBREDDIT_BY_TOPIC, {
-      variables: { topic: formData.subreddit },
+    } = await client.query({
+      query: GET_SUBREDDIT_BY_TOPIC,
+      variables: {
+        topic: formData.subreddit,
+      },
     });
+
     if (error)
       return toast.error("Whooops! Something didn't worked!", {
         id: notification,
