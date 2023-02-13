@@ -111,6 +111,28 @@ type Query {
       """
       configuration: "postgresql_config"
     )
+  getPostListById(post_id: ID): post
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      select * from "post"
+      where "post"."id" = $1
+      """
+      configuration: "postgresql_config"
+    )
+  getPostListByTopic(topic: String): [post]
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      select *, "post".id as id from "post"
+      join "subreddit" on "subreddit"."id" = "post"."subreddit_id"
+      where "subreddit"."topic" = $1
+      order by "post"."created_at" desc
+      """
+      configuration: "postgresql_config"
+    )
   postPaginatedList(first: Int, after: Int): [post]
     @dbquery(
       type: "postgresql"
@@ -136,7 +158,6 @@ type Query {
       """
       configuration: "postgresql_config"
     )
-
   getSubredditListByTopic(topic: String!): [subreddit]
     @dbquery(
       type: "postgresql"
