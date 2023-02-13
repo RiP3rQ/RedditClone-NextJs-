@@ -167,6 +167,17 @@ type Query {
       """
       configuration: "postgresql_config"
     )
+  getSubredditListLimit(limit: Int!): [subreddit]
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      SELECT * FROM "subreddit"
+      Order by "created_at" desc
+      LIMIT $1
+      """
+      configuration: "postgresql_config"
+    )
   subredditPaginatedList(first: Int, after: Int): [subreddit]
     @dbquery(
       type: "postgresql"
