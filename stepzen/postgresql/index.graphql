@@ -90,11 +90,25 @@ type Query {
       table: "post"
       configuration: "postgresql_config"
     )
+  # postList: [post]
+  #   @dbquery(
+  #     type: "postgresql"
+  #     schema: "public"
+  #     query: """
+  #     select *, "post".id as id from "post"
+  #     join "subreddit" on "subreddit"."id" = "post"."subreddit_id"
+  #     order by "post"."created_at" desc
+  #     """
+  #     configuration: "postgresql_config"
+  #   )
   postList: [post]
     @dbquery(
       type: "postgresql"
       schema: "public"
-      table: "post"
+      query: """
+      select * from "post"
+      order by "post"."created_at" desc
+      """
       configuration: "postgresql_config"
     )
   postPaginatedList(first: Int, after: Int): [post]
