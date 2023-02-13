@@ -5,9 +5,9 @@ import Post from "./Post";
 
 function Feed() {
   const { error, data } = useQuery(GET_ALL_POSTS);
-  const posts: Post[] = data?.getPostList;
+  const posts: Post[] = data?.postList;
   return (
-    <div>
+    <div className="mt-5 space-y-4">
       {posts?.map((post) => (
         <Post key={post.id} post={post} />
       ))}
